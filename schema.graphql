@@ -1,0 +1,42 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Mutation {
+    addSpeaker(speaker: SpeakerInput): Speaker
+    deleteSpeaker(speakerId: Int!): Speaker
+    toggleSpeakerFavorite(speakerId: Int!): Speaker
+}
+
+type Query {
+    speakers: SpeakerResults
+}
+
+type Speaker {
+    favorite: Boolean
+    first: String
+    id: ID!
+    last: String
+}
+
+type SpeakerResults {
+    datalist: [Speaker]
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+input SpeakerInput {
+    favorite: Boolean
+    first: String
+    last: String
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

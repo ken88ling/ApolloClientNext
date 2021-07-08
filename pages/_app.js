@@ -1,5 +1,6 @@
 import App from "next/app";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function MyApp({ Component, pageProps }) {
   const apolloClient = new ApolloClient({
