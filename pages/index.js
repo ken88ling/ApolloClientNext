@@ -1,5 +1,5 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 const GET_SPEAKERS = gql`
   query {
@@ -14,26 +14,75 @@ const GET_SPEAKERS = gql`
   }
 `;
 
-function Index(props) {
-  const { loading, error, data } = useQuery(GET_SPEAKERS);
+const TOGGLE_SPEAKER_FAVORITE = gql`
+  mutation ToggleSpeakerFavorite($speakerId: Int!) {
+    toggleSpeakerFavorite(speakerId: $speakerId) {
+      id
+      first
+      last
+      favorite
+    }
+  }
+`;
 
-  if (loading) return <div>Loading....</div>;
-  if (error) return <div>{error.message}</div>;
+const DELETE_SPEAKER = gql`
+  mutation DeleteSpeaker($speakerId: Int!) {
+    deleteSpeaker(speakerId: $speakerId) {
+      id
+      first
+      last
+      favorite
+    }
+  }
+`;
+
+export default function Index(props) {
+  const { loading, error, data } = useQuery(GET_SPEAKERS);
+  const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
+  const [deleteSpeaker] = useMutation(DELETE_SPEAKER);
+
+  if (loading) return <div className="col-sm6">Loading...</div>;
+  if (error) return <div className="col-sm6">Error</div>;
+
   return (
-    <div className="container show-fav">
+    <div className="container">
       <div className="row">
-        <div className="fav-list">
-          {data?.speakers?.datalist.map(({ id, first, last, favorite }) => {
+        <div className="col-md-12">
+          {data.speakers.datalist.map(({ id, first, last, favorite }) => {
             return (
-              <div className="favbox" key={id}>
-                <div className="fav-clm col-sm-7">
-                  <h4>
-                    {first} {last} ({id})
-                  </h4>
+              <div key={id}>
+                <h4>
+                  {first} {last} ({id})
+                </h4>
+                <div>
+                  <div>
+                    <button
+                      onClick={() => {
+                        toggleSpeakerFavorite({
+                          variables: {
+                            speakerId: parseInt(id),
+                          },
+                        }).then();
+                      }}
+                    >
+                      Favorite
+                    </button>
+                    -> {favorite === true ? "True" : "false"}
+                  </div>
                 </div>
-                <div className="fav-clm col-sm-5">
-                  <span>Favorite {favorite === true ? "Yes" : "No"}</span>
-                </div>
+
+                <span
+                  onClick={() => {
+                    deleteSpeaker({
+                      variables: {
+                        speakerId: parseInt(id),
+                      },
+                      refetchQueries: [{ query: GET_SPEAKERS }],
+                    }).then();
+                  }}
+                >
+                  Delete
+                </span>
               </div>
             );
           })}
@@ -42,5 +91,3 @@ function Index(props) {
     </div>
   );
 }
-
-export default Index;
