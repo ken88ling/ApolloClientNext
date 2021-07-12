@@ -59,22 +59,37 @@ export default function Index(props) {
 
   return (
     <>
-     <div style={{margin:'12px'}}>
-       <h4>Create New Speaker</h4>
-       <Toolbar
-           insertSpeakerEvent={(first, last, favorite) => {
-             addSpeaker({
-               variables: {
-                 first,
-                 last,
-                 favorite,
-               },
-               refetchQueries: [{ query: GET_SPEAKERS }],
-             }).then();
-           }}
-       />
-     </div>
-      <hr/>
+      <div style={{ margin: "12px" }}>
+        <h4>Create New Speaker</h4>
+        <Toolbar
+          insertSpeakerEvent={(first, last, favorite) => {
+            addSpeaker({
+              variables: {
+                first,
+                last,
+                favorite,
+              },
+              // refetchQueries: [{ query: GET_SPEAKERS }],
+              // todo let's update the cache instead re-fetch data from server again
+              update: (cache, { data: { addSpeaker } }) => {
+                const { speakers } = cache.readQuery({
+                  query: GET_SPEAKERS,
+                });
+                cache.writeQuery({
+                  query: GET_SPEAKERS,
+                  data: {
+                    speakers: {
+                      __typename: "SpeakerResults",
+                      datalist: [addSpeaker, ...speakers.datalist],
+                    },
+                  },
+                });
+              },
+            });
+          }}
+        />
+      </div>
+      <hr />
       <div className="container">
         <div className="row">
           <div className="col-md-12">
@@ -107,7 +122,23 @@ export default function Index(props) {
                         variables: {
                           speakerId: parseInt(id),
                         },
-                        refetchQueries: [{ query: GET_SPEAKERS }],
+                        // refetchQueries: [{ query: GET_SPEAKERS }],
+                        update: (cache, { data: { deleteSpeaker } }) => {
+                          const { speakers } = cache.readQuery({
+                            query: GET_SPEAKERS,
+                          });
+                          cache.writeQuery({
+                            query: GET_SPEAKERS,
+                            data: {
+                              speakers: {
+                                __typename: "SpeakerResults",
+                                datalist: speakers.datalist.filter(
+                                  (rec) => rec.id !== deleteSpeaker.id
+                                ),
+                              },
+                            },
+                          });
+                        },
                       }).then();
                     }}
                   >
