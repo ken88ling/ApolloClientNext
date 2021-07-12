@@ -1,4 +1,6 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import {ApolloClient, InMemoryCache, makeVar} from "@apollo/client";
+
+export const currentThemeVar = makeVar('dark')
 
 export function useApollo() {
   const options = {

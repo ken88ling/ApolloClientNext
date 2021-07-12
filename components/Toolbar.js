@@ -1,13 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { GET_SPEAKERS } from "../graphql/queries";
-import { useApolloClient, useMutation } from "@apollo/client";
 import { ADD_SPEAKER } from "../graphql/mutations";
+import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
+import { currentThemeVar } from "../graphql/apolloClient";
 
 export default function Toolbar() {
   const { register, handleSubmit } = useForm();
   const [addSpeaker] = useMutation(ADD_SPEAKER);
   const apolloClient = useApolloClient();
+  const currentTheme = useReactiveVar(currentThemeVar);
 
   const onSubmit = (d) => {
     insertSpeakerEvent(d.first, d.last, d.favorite);
@@ -53,7 +55,7 @@ export default function Toolbar() {
   };
 
   return (
-    <>
+    <div style={{ padding: "16px" }}>
       <h4>Create New Speaker</h4>
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -72,6 +74,18 @@ export default function Toolbar() {
       <button onClick={sortByIdDescending}>
         <span>Sort Speakers by id descending</span>
       </button>
-    </>
+      <hr />
+      Theme -> {currentTheme}
+      <br />
+      <select
+        value={currentTheme}
+        onChange={({ currentTarget }) => {
+          currentThemeVar(currentTarget.value);
+        }}
+      >
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
   );
 }

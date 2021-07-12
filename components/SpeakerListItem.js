@@ -1,16 +1,25 @@
-import { useQuery } from "@apollo/client";
+import { useQuery, useReactiveVar } from "@apollo/client";
 import { GET_SPEAKERS } from "../graphql/queries";
 import Toolbar from "./Toolbar";
 import React from "react";
 import SpeakerItem from "./SpeakerItem";
+import { currentThemeVar } from "../graphql/apolloClient";
 
 export default function SpeakerListItem(props) {
   const { loading, error, data } = useQuery(GET_SPEAKERS);
+  const currentTheme = useReactiveVar(currentThemeVar);
+
   if (loading) return <div className="col-sm6">Loading...</div>;
   if (error) return <div className="col-sm6">Error</div>;
 
   return (
-    <>
+    <div
+      style={
+        currentTheme === "dark"
+          ? { backgroundColor: "black", color: "white" }
+          : { backgroundColor: "white" }
+      }
+    >
       <Toolbar />
       <hr />
       <div className="container">
@@ -29,6 +38,6 @@ export default function SpeakerListItem(props) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
