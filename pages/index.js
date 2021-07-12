@@ -1,5 +1,5 @@
 import React from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation, useQuery } from "@apollo/client";
 import Toolbar from "../components/Toolbar";
 
 const GET_SPEAKERS = gql`
@@ -53,6 +53,7 @@ export default function Index(props) {
   const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
   const [deleteSpeaker] = useMutation(DELETE_SPEAKER);
   const [addSpeaker] = useMutation(ADD_SPEAKER);
+  const apolloClient = useApolloClient();
 
   if (loading) return <div className="col-sm6">Loading...</div>;
   if (error) return <div className="col-sm6">Error</div>;
@@ -62,6 +63,20 @@ export default function Index(props) {
       <div style={{ margin: "12px" }}>
         <h4>Create New Speaker</h4>
         <Toolbar
+          sortByIdDescending={() => {
+            const { speakers } = apolloClient.cache.readQuery({
+              query: GET_SPEAKERS,
+            });
+            apolloClient.cache.writeQuery({
+              query: GET_SPEAKERS,
+              data: {
+                speakers: {
+                  __typename: "SpeakerResults",
+                  datalist: [...speakers.datalist].sort((a, b) => b.id - a.id),
+                },
+              },
+            });
+          }}
           insertSpeakerEvent={(first, last, favorite) => {
             addSpeaker({
               variables: {
