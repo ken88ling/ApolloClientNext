@@ -4,14 +4,14 @@ import { useMutation } from "@apollo/client";
 import { DELETE_SPEAKER, TOGGLE_SPEAKER_FAVORITE } from "../graphql/mutations";
 
 function SpeakerItem({ speakerRec }) {
-  const { id, first, last, favorite } = speakerRec;
+  const { id, first, last, favorite, fullName } = speakerRec;
   const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
   const [deleteSpeaker] = useMutation(DELETE_SPEAKER);
 
   return (
     <div key={id}>
       <h4>
-        {first} {last} ({id})
+        {fullName} ({id})
       </h4>
       <div>
         <div>
@@ -66,8 +66,9 @@ function SpeakerItem({ speakerRec }) {
           }).then();
         }}
       >
-        Delete
+       <div style={{margin: '5px'}}><button>Delete</button></div>
       </span>
+        <hr/>
     </div>
   );
 }

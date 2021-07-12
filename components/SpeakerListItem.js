@@ -63,11 +63,11 @@ export default function SpeakerListItem(props) {
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-            {data.speakers.datalist.map(({ id, first, last, favorite }) => {
+            {data.speakers.datalist.map(({ id, first, last, favorite, fullName }) => {
               return (
                 <SpeakerItem
                   key={id}
-                  speakerRec={{ id, first, last, favorite }}
+                  speakerRec={{ id, first, last, favorite, fullName }}
                 />
               );
             })}
