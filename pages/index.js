@@ -107,6 +107,16 @@ export default function Index(props) {
                             variables: {
                               speakerId: parseInt(id),
                             },
+                            optimisticResponse: {
+                              __typename: "Mutation",
+                              toggleSpeakerFavorite: {
+                                id,
+                                first,
+                                last,
+                                favorite: !favorite,
+                                __typename: "Speaker",
+                              },
+                            },
                           }).then();
                         }}
                       >
