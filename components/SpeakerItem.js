@@ -11,13 +11,16 @@ function SpeakerItem({ speakerRec }) {
   const selectedSpeakerIds = useReactiveVar(checkBoxListVar);
 
   return (
-    <div key={id}>
+    <div
+      key={id}
+      className="m-1"
+      style={favorite === true ? { border: "1px solid red" } : {}}
+    >
       <h4>
-
         <input
           type="checkbox"
+          defaultChecked={checkBoxColumn}
           onClick={() => {
-              console.log('check trigger');
             checkBoxListVar(
               checkBoxColumn === true
                 ? selectedSpeakerIds.filter((rec) => {
@@ -28,7 +31,6 @@ function SpeakerItem({ speakerRec }) {
                 : [id]
             );
           }}
-          checked={checkBoxColumn}
           className="m-2"
         />
         {fullName} ({id})
@@ -36,6 +38,7 @@ function SpeakerItem({ speakerRec }) {
       <div>
         <div>
           <button
+            className="btn btn-primary m-2"
             onClick={() => {
               toggleSpeakerFavorite({
                 variables: {
@@ -56,7 +59,6 @@ function SpeakerItem({ speakerRec }) {
           >
             Favorite
           </button>
-          -> {favorite === true ? "True" : "false"}
         </div>
       </div>
 
@@ -86,9 +88,7 @@ function SpeakerItem({ speakerRec }) {
           }).then();
         }}
       >
-        <div style={{ margin: "5px" }}>
-          <button>Delete</button>
-        </div>
+        <button className="btn btn-primary m-2">Delete</button>
       </span>
       <hr />
     </div>

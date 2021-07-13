@@ -72,13 +72,12 @@ export default function Toolbar() {
         <input type="submit" value="submit" />
       </form>
       <hr />
-      <button onClick={sortByIdDescending}>
+      <button onClick={sortByIdDescending} className="btn btn-primary">
         <span>Sort Speakers by id descending</span>
       </button>
       <hr />
-      Theme -> {currentTheme}
-      <br />
       <select
+        className="btn btn-primary m-2"
         value={currentTheme}
         onChange={({ currentTarget }) => {
           currentThemeVar(currentTarget.value);
@@ -88,7 +87,7 @@ export default function Toolbar() {
         <option value="dark">Dark</option>
       </select>
       <button
-        className="info"
+          className="btn btn-primary m-2"
         onClick={() => {
           const selectedSpeakerIds = checkBoxListVar();
           if (selectedSpeakerIds) {
@@ -101,7 +100,9 @@ export default function Toolbar() {
             });
           }
         }}
-      >Toggle Favorite</button>
+      >
+        Toggle Favorite
+      </button>
     </div>
   );
 }

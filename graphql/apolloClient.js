@@ -10,7 +10,7 @@ export function useApollo() {
         fields: {
           fullName: {
             read: function (_, { readField }) {
-              return `${readField("first")} ... ${readField("last")}`;
+              return `${readField("first")} ${readField("last")}`;
             },
           },
           checkBoxColumn: {
