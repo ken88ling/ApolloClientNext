@@ -1,13 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { GET_SPEAKERS } from "../graphql/queries";
-import { ADD_SPEAKER } from "../graphql/mutations";
+import { ADD_SPEAKER, TOGGLE_SPEAKER_FAVORITE } from "../graphql/mutations";
 import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
-import { currentThemeVar } from "../graphql/apolloClient";
+import { checkBoxListVar, currentThemeVar } from "../graphql/apolloClient";
 
 export default function Toolbar() {
   const { register, handleSubmit } = useForm();
   const [addSpeaker] = useMutation(ADD_SPEAKER);
+  const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
   const apolloClient = useApolloClient();
   const currentTheme = useReactiveVar(currentThemeVar);
 
@@ -86,6 +87,21 @@ export default function Toolbar() {
         <option value="light">Light</option>
         <option value="dark">Dark</option>
       </select>
+      <button
+        className="info"
+        onClick={() => {
+          const selectedSpeakerIds = checkBoxListVar();
+          if (selectedSpeakerIds) {
+            selectedSpeakerIds.forEach((speakerId) => {
+              toggleSpeakerFavorite({
+                variables: {
+                  speakerId: parseInt(speakerId),
+                },
+              });
+            });
+          }
+        }}
+      >Toggle Favorite</button>
     </div>
   );
 }

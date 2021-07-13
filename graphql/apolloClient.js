@@ -1,6 +1,7 @@
-import {ApolloClient, InMemoryCache, makeVar} from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
 
-export const currentThemeVar = makeVar('dark')
+export const currentThemeVar = makeVar("dark");
+export const checkBoxListVar = makeVar([]);
 
 export function useApollo() {
   const options = {
@@ -10,6 +11,13 @@ export function useApollo() {
           fullName: {
             read: function (_, { readField }) {
               return `${readField("first")} ... ${readField("last")}`;
+            },
+          },
+          checkBoxColumn: {
+            read: function (_, { readField }) {
+              const id = readField("id");
+              const selectedSpeakerIds = checkBoxListVar()
+              return selectedSpeakerIds ? selectedSpeakerIds.includes(id): false
             },
           },
         },
