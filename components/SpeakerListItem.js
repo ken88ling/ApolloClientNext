@@ -3,13 +3,20 @@ import { GET_SPEAKERS } from "../graphql/queries";
 import Toolbar from "./Toolbar";
 import React from "react";
 import SpeakerItem from "./SpeakerItem";
-import { currentThemeVar } from "../graphql/apolloClient";
+import { currentThemeVar, paginationDataVar } from "../graphql/apolloClient";
 
 export default function SpeakerListItem(props) {
-  const { loading, error, data } = useQuery(GET_SPEAKERS);
   const currentTheme = useReactiveVar(currentThemeVar);
+  const paginationData = useReactiveVar(paginationDataVar);
+  const { limit, currentPage } = paginationData;
+  const { loading, error, data } = useQuery(GET_SPEAKERS, {
+    variables: {
+      offset: currentPage * limit,
+      limit,
+    },
+  });
 
-  if (loading) return <div className="col-sm6">Loading...</div>;
+  // if (loading) return <div className="col-sm6">Loading...</div>;
   if (error) return <div className="col-sm6">Error</div>;
 
   return (
@@ -20,12 +27,13 @@ export default function SpeakerListItem(props) {
           : { backgroundColor: "white" }
       }
     >
-      <Toolbar />
+      <Toolbar totalItemCount={!loading && data.speakers?.pageInfo?.totalItemCount} />
       <hr />
       <div className="container">
         <div className="row">
           <div className="col-md-12">
-            {data.speakers.datalist.map(
+            {loading &&  <div className="col-sm6">Loading...</div>}
+            {!loading && data.speakers.datalist.map(
               ({ id, first, last, favorite, fullName, checkBoxColumn }) => {
                 return (
                   <SpeakerItem

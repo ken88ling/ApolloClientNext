@@ -2,13 +2,14 @@ import React from "react";
 import { GET_SPEAKERS } from "../graphql/queries";
 import { useMutation, useReactiveVar } from "@apollo/client";
 import { DELETE_SPEAKER, TOGGLE_SPEAKER_FAVORITE } from "../graphql/mutations";
-import { checkBoxListVar } from "../graphql/apolloClient";
+import { checkBoxListVar, paginationDataVar } from "../graphql/apolloClient";
 
 function SpeakerItem({ speakerRec }) {
   const { id, first, last, favorite, fullName, checkBoxColumn } = speakerRec;
   const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
   const [deleteSpeaker] = useMutation(DELETE_SPEAKER);
   const selectedSpeakerIds = useReactiveVar(checkBoxListVar);
+  const paginationData = useReactiveVar(paginationDataVar);
 
   return (
     <div
@@ -68,19 +69,40 @@ function SpeakerItem({ speakerRec }) {
             variables: {
               speakerId: parseInt(id),
             },
+            optimisticResponse: {
+              typename: "__mutation",
+              deleteSpeaker: {
+                id,
+                first,
+                last,
+                favorite,
+              },
+            },
             // refetchQueries: [{ query: GET_SPEAKERS }],
             update: (cache, { data: { deleteSpeaker } }) => {
               const { speakers } = cache.readQuery({
                 query: GET_SPEAKERS,
+                variables: {
+                  limit: paginationData.limit,
+                  offset: paginationData.offset,
+                },
               });
               cache.writeQuery({
                 query: GET_SPEAKERS,
+                variables: {
+                  limit: paginationData.limit,
+                  offset: paginationData.offset,
+                },
                 data: {
                   speakers: {
                     __typename: "SpeakerResults",
                     datalist: speakers.datalist.filter(
                       (rec) => rec.id !== deleteSpeaker.id
                     ),
+                    pageInfo: {
+                      __typename: "PageInfo",
+                      totalItemCount: 0,
+                    },
                   },
                 },
               });

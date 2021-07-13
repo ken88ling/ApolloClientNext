@@ -11,8 +11,12 @@ type Mutation {
     toggleSpeakerFavorite(speakerId: Int!): Speaker
 }
 
+type PageInfo {
+    totalItemCount: Int
+}
+
 type Query {
-    speakers: SpeakerResults
+    speakers(limit: Int = -1, offset: Int = 0): SpeakerResults
 }
 
 type Speaker {
@@ -24,6 +28,7 @@ type Speaker {
 
 type SpeakerResults {
     datalist: [Speaker]
+    pageInfo: PageInfo
 }
 
 enum CacheControlScope {

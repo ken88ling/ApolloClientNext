@@ -3,14 +3,22 @@ import { useForm } from "react-hook-form";
 import { GET_SPEAKERS } from "../graphql/queries";
 import { ADD_SPEAKER, TOGGLE_SPEAKER_FAVORITE } from "../graphql/mutations";
 import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
-import { checkBoxListVar, currentThemeVar } from "../graphql/apolloClient";
+import {
+  checkBoxListVar,
+  currentThemeVar,
+  paginationDataVar,
+} from "../graphql/apolloClient";
+import PagingOffsetLimitControl from "./PagingOffsetLimitControl";
 
-export default function Toolbar() {
+export default function Toolbar({ totalItemCount }) {
   const { register, handleSubmit } = useForm();
   const [addSpeaker] = useMutation(ADD_SPEAKER);
   const [toggleSpeakerFavorite] = useMutation(TOGGLE_SPEAKER_FAVORITE);
   const apolloClient = useApolloClient();
   const currentTheme = useReactiveVar(currentThemeVar);
+  const paginationData = useReactiveVar(paginationDataVar);
+
+  const lastPage = Math.trunc((totalItemCount - 1) / paginationData.limit);
 
   const onSubmit = (d) => {
     insertSpeakerEvent(d.first, d.last, d.favorite);
@@ -19,9 +27,17 @@ export default function Toolbar() {
   const sortByIdDescending = () => {
     const { speakers } = apolloClient.cache.readQuery({
       query: GET_SPEAKERS,
+      variables: {
+        limit: paginationData.limit,
+        offset: paginationData.offset,
+      },
     });
     apolloClient.cache.writeQuery({
       query: GET_SPEAKERS,
+      variables: {
+        limit: paginationData.limit,
+        offset: paginationData.offset,
+      },
       data: {
         speakers: {
           __typename: "SpeakerResults",
@@ -41,13 +57,25 @@ export default function Toolbar() {
       update: (cache, { data: { addSpeaker } }) => {
         const { speakers } = cache.readQuery({
           query: GET_SPEAKERS,
+          variables: {
+            limit: paginationData.limit,
+            offset: paginationData.offset,
+          },
         });
         cache.writeQuery({
           query: GET_SPEAKERS,
+          variables: {
+            limit: paginationData.limit,
+            offset: paginationData.offset,
+          },
           data: {
             speakers: {
               __typename: "SpeakerResults",
               datalist: [addSpeaker, ...speakers.datalist],
+              pageInfo: {
+                __typename: "PageInfo",
+                totalItemCount: totalItemCount,
+              },
             },
           },
         });
@@ -69,7 +97,7 @@ export default function Toolbar() {
         <div>
           Is Favorite <input type="checkbox" {...register("favorite")} />
         </div>
-        <input type="submit" value="submit" />
+        <input type="submit" value="submit" className='btn btn-primary' />
       </form>
       <hr />
       <button onClick={sortByIdDescending} className="btn btn-primary">
@@ -87,7 +115,7 @@ export default function Toolbar() {
         <option value="dark">Dark</option>
       </select>
       <button
-          className="btn btn-primary m-2"
+        className="btn btn-primary m-2"
         onClick={() => {
           const selectedSpeakerIds = checkBoxListVar();
           if (selectedSpeakerIds) {
@@ -103,6 +131,8 @@ export default function Toolbar() {
       >
         Toggle Favorite
       </button>
+      <hr />
+      <PagingOffsetLimitControl lastPage={lastPage} />
     </div>
   );
 }
