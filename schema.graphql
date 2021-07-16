@@ -18,8 +18,21 @@ type PageInfo {
 }
 
 type Query {
+    sessionsConcat(afterCursor: String = "", limit: Int = -1): SessionResults
     speakers(limit: Int = -1, offset: Int = 0): SpeakerResults
     speakersConcat(afterCursor: String = "", limit: Int = -1): SpeakerResults
+}
+
+type Session {
+    cursor: String
+    eventYear: String
+    id: ID!
+    title: String!
+}
+
+type SessionResults {
+    datalist: [Session]
+    pageInfo: PageInfo
 }
 
 type Speaker {
@@ -28,6 +41,7 @@ type Speaker {
     first: String
     id: ID!
     last: String
+    sessions: [Session]
 }
 
 type SpeakerResults {

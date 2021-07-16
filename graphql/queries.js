@@ -1,5 +1,24 @@
 import { gql } from "@apollo/client";
 
+export const GET_SESSIONS_CONCAT = gql`
+  query ($afterCursor: String, $limit: Int) {
+    sessionsConcat(afterCursor: $afterCursor, limit: $limit) {
+      datalist {
+        id
+        title
+        eventYear
+        cursor
+      }
+      pageInfo {
+        totalItemCount
+        lastCursor
+        hasNextPage
+      }
+    }
+  }
+`;
+
+
 export const GET_SPEAKERS_CONCAT = gql`
   query ($afterCursor: String, $limit: Int) {
     speakersConcat(afterCursor: $afterCursor, limit: $limit) {

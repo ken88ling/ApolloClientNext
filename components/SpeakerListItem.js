@@ -16,7 +16,6 @@ export default function SpeakerListItem(props) {
     },
   });
 
-  // if (loading) return <div className="col-sm6">Loading...</div>;
   if (error) return <div className="col-sm6">Error</div>;
 
   return (

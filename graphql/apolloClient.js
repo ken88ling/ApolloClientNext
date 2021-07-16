@@ -16,6 +16,7 @@ export function useApollo() {
       Query: {
         fields: {
           speakersConcat: generalConcatPagination(),
+          sessionsConcat: generalConcatPagination()
         },
       },
       Speaker: {
