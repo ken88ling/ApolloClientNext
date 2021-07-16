@@ -12,14 +12,18 @@ type Mutation {
 }
 
 type PageInfo {
+    hasNextPage: Boolean
+    lastCursor: String
     totalItemCount: Int
 }
 
 type Query {
     speakers(limit: Int = -1, offset: Int = 0): SpeakerResults
+    speakersConcat(afterCursor: String = "", limit: Int = -1): SpeakerResults
 }
 
 type Speaker {
+    cursor: String
     favorite: Boolean
     first: String
     id: ID!
