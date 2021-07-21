@@ -45,6 +45,7 @@ function SpeakerItem({ speakerRec }) {
                 variables: {
                   speakerId: parseInt(id),
                 },
+                // refetchQueries: [{ query: GET_SPEAKERS }],
                 optimisticResponse: {
                   __typename: "Mutation",
                   toggleSpeakerFavorite: {

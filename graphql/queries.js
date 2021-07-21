@@ -18,7 +18,6 @@ export const GET_SESSIONS_CONCAT = gql`
   }
 `;
 
-
 export const GET_SPEAKERS_CONCAT = gql`
   query ($afterCursor: String, $limit: Int) {
     speakersConcat(afterCursor: $afterCursor, limit: $limit) {
@@ -48,8 +47,19 @@ export const GET_SPEAKERS = gql`
         first
         last
         favorite
+        company
+        twitterHandle
+        bio
         fullName @client
         checkBoxColumn @client
+        sessions {
+          id
+          title
+          eventYear
+          room {
+            name
+          }
+        }
       }
       pageInfo {
         totalItemCount

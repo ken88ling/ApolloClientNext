@@ -23,10 +23,17 @@ type Query {
     speakersConcat(afterCursor: String = "", limit: Int = -1): SpeakerResults
 }
 
+type Room {
+    capacity: Int
+    id: ID!
+    name: String
+}
+
 type Session {
     cursor: String
     eventYear: String
     id: ID!
+    room: Room
     title: String!
 }
 
@@ -36,12 +43,15 @@ type SessionResults {
 }
 
 type Speaker {
+    bio: String
+    company: String
     cursor: String
     favorite: Boolean
     first: String
     id: ID!
     last: String
     sessions: [Session]
+    twitterHandle: String
 }
 
 type SpeakerResults {
